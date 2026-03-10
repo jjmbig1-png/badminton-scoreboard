@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Badminton Scoreboard</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+}
+
+.top{
+padding:10px;
+font-size:28px;
+}
+
+.setscore{
+font-size:22px;
+margin-bottom:10px;
+}
+
+.scoreboard{
+display:flex;
+height:60vh;
+}
+
+.side{
+flex:1;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+font-size:110px;
+font-weight:bold;
+}
+
+#me{
+background:#4CAF50;
+}
+
+#opponent{
+background:#2196F3;
+}
+
+.server{
+font-size:40px;
+margin-top:10px;
+}
+
+.controls{
+margin-top:15px;
+}
+
+button{
+font-size:20px;
+padding:10px 20px;
+margin:5px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="top">
+<div id="setText">1세트</div>
+<div class="setscore">세트 스코어: <span id="mySet">0</span> : <span id="opSet">0</span></div>
+</div>
+
+<div class="scoreboard">
+<div id="me" class="side">
+<div id="meScore">0</div>
+<div id="meServer" class="server">●</div>
+</div>
+
+<div id="opponent" class="side">
+<div id="opScore">0</div>
+<div id="opServer" class="server"></div>
+</div>
+</div>
+
+<div class="controls">
+<button onclick="changeServer()">서브 변경</button>
+<button onclick="nextSet()">Next Set</button>
+<button onclick="resetGame()">Reset</button>
+</div>
+
+<script>
+
+let me = 0
+let opponent = 0
+
+let mySet = 0
+let opSet = 0
+
+let setNumber = 1
+let server = "me"
+
+function updateDisplay(){
+
+document.getElementById("meScore").innerText = me
+document.getElementById("opScore").innerText = opponent
+
+document.getElementById("setText").innerText = setNumber + "세트"
+
+document.getElementById("mySet").innerText = mySet
+document.getElementById("opSet").innerText = opSet
+
+if(server === "me"){
+document.getElementById("meServer").innerText = "●"
+document.getElementById("opServer").innerText = ""
+}else{
+document.getElementById("opServer").innerText = "●"
+document.getElementById("meServer").innerText = ""
+}
+
+checkWinner()
+
+}
+
+function checkWinner(){
+
+if((me >=21 || opponent >=21) && Math.abs(me-opponent) >=2){
+
+if(me > opponent){
+mySet++
+}else{
+opSet++
+}
+
+}
+
+}
+
+document.getElementById("me").onclick = function(){
+me++
+updateDisplay()
+}
+
+document.getElementById("opponent").onclick = function(){
+opponent++
+updateDisplay()
+}
+
+function changeServer(){
+
+if(server === "me"){
+server = "opponent"
+}else{
+server = "me"
+}
+
+updateDisplay()
+
+}
+
+function nextSet(){
+
+me = 0
+opponent = 0
+
+setNumber++
+
+updateDisplay()
+
+}
+
+function resetGame(){
+
+me = 0
+opponent = 0
+
+mySet = 0
+opSet = 0
+
+setNumber = 1
+
+updateDisplay()
+
+}
+
+updateDisplay()
+
+</script>
+
+</body>
+</html>
