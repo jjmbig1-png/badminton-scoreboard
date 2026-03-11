@@ -54,6 +54,12 @@ margin-top:20px;
 font-size:30px;
 }
 
+button{
+font-size:25px;
+padding:10px 20px;
+margin:10px;
+}
+
 input{
 font-size:20px;
 text-align:center;
@@ -80,6 +86,8 @@ text-align:center;
 
 <div class="score" onclick="addScore('A')" id="scoreA">0</div>
 
+<button onclick="minusScore('A')">-1</button>
+
 <div class="set">SET : <span id="setA">0</span></div>
 
 </div>
@@ -91,11 +99,15 @@ text-align:center;
 
 <div class="score" onclick="addScore('B')" id="scoreB">0</div>
 
+<button onclick="minusScore('B')">-1</button>
+
 <div class="set">SET : <span id="setB">0</span></div>
 
 </div>
 
 </div>
+
+<button onclick="resetMatch()">RESET MATCH</button>
 
 <div class="timer" id="timer"></div>
 
@@ -116,7 +128,32 @@ if(team==="B") scoreB++
 
 server=team
 
+speakScore()
+
 checkGame()
+update()
+
+}
+
+function minusScore(team){
+
+if(team==="A" && scoreA>0) scoreA--
+if(team==="B" && scoreB>0) scoreB--
+
+update()
+
+}
+
+function resetMatch(){
+
+scoreA=0
+scoreB=0
+setA=0
+setB=0
+
+document.getElementById("sideA").classList.remove("winner")
+document.getElementById("sideB").classList.remove("winner")
+
 update()
 
 }
@@ -193,6 +230,28 @@ function speak(text){
 
 let msg=new SpeechSynthesisUtterance(text)
 msg.lang="en-US"
+speechSynthesis.speak(msg)
+
+}
+
+function speakScore(){
+
+let numbers=[
+"Zero","One","Two","Three","Four","Five",
+"Six","Seven","Eight","Nine","Ten",
+"Eleven","Twelve","Thirteen","Fourteen",
+"Fifteen","Sixteen","Seventeen","Eighteen",
+"Nineteen","Twenty","Twenty One","Twenty Two",
+"Twenty Three","Twenty Four","Twenty Five",
+"Twenty Six","Twenty Seven","Twenty Eight",
+"Twenty Nine","Thirty"
+]
+
+let text = numbers[scoreA] + " " + numbers[scoreB]
+
+let msg = new SpeechSynthesisUtterance(text)
+msg.lang="en-US"
+
 speechSynthesis.speak(msg)
 
 }
