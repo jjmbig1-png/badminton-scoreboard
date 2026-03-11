@@ -1,67 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 <title>Badminton Scoreboard</title>
 
 <style>
+
 body{
-margin:0;
-font-family:Arial;
-background:#111;
+background:black;
 color:white;
+font-family:Arial;
 text-align:center;
 }
 
-.top{
-padding:10px;
-font-size:28px;
+.container{
+display:flex;
+justify-content:space-around;
+margin-top:40px;
 }
 
-.setscore{
-font-size:22px;
+.team{
+width:45%;
+padding:20px;
+border-radius:20px;
+}
+
+.score{
+font-size:120px;
+cursor:pointer;
+}
+
+.name{
+font-size:30px;
 margin-bottom:10px;
 }
 
-.scoreboard{
-display:flex;
-height:60vh;
+.serve{
+font-size:30px;
+color:yellow;
 }
 
-.side{
-flex:1;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-font-size:110px;
-font-weight:bold;
+.winner{
+background:#ffd400;
+color:black;
 }
 
-#me{
-background:#4CAF50;
+.timer{
+font-size:50px;
+margin-top:20px;
 }
 
-#opponent{
-background:#2196F3;
+.set{
+font-size:30px;
 }
 
-.server{
-font-size:40px;
-margin-top:10px;
-}
-
-.controls{
-margin-top:15px;
-}
-
-button{
+input{
 font-size:20px;
-padding:10px 20px;
-margin:5px;
-border:none;
-border-radius:8px;
-cursor:pointer;
+text-align:center;
 }
 
 </style>
@@ -69,124 +64,156 @@ cursor:pointer;
 
 <body>
 
-<div class="top">
-<div id="setText">1세트</div>
-<div class="setscore">세트 스코어: <span id="mySet">0</span> : <span id="opSet">0</span></div>
+<h1>Badminton Scoreboard</h1>
+
+<div>
+<input id="teamAname" value="TEAM A">
+<input id="teamBname" value="TEAM B">
 </div>
 
-<div class="scoreboard">
-<div id="me" class="side">
-<div id="meScore">0</div>
-<div id="meServer" class="server">●</div>
+<div class="container">
+
+<div id="sideA" class="team">
+
+<div class="name" id="teamA"></div>
+<div class="serve" id="serveA"></div>
+
+<div class="score" onclick="addScore('A')" id="scoreA">0</div>
+
+<div class="set">SET : <span id="setA">0</span></div>
+
 </div>
 
-<div id="opponent" class="side">
-<div id="opScore">0</div>
-<div id="opServer" class="server"></div>
-</div>
+<div id="sideB" class="team">
+
+<div class="name" id="teamB"></div>
+<div class="serve" id="serveB"></div>
+
+<div class="score" onclick="addScore('B')" id="scoreB">0</div>
+
+<div class="set">SET : <span id="setB">0</span></div>
+
 </div>
 
-<div class="controls">
-<button onclick="changeServer()">서브 변경</button>
-<button onclick="nextSet()">Next Set</button>
-<button onclick="resetGame()">Reset</button>
 </div>
+
+<div class="timer" id="timer"></div>
 
 <script>
 
-let me = 0
-let opponent = 0
+let scoreA=0
+let scoreB=0
 
-let mySet = 0
-let opSet = 0
+let setA=0
+let setB=0
 
-let setNumber = 1
-let server = "me"
+let server="A"
 
-function updateDisplay(){
+function addScore(team){
 
-document.getElementById("meScore").innerText = me
-document.getElementById("opScore").innerText = opponent
+if(team==="A") scoreA++
+if(team==="B") scoreB++
 
-document.getElementById("setText").innerText = setNumber + "세트"
+server=team
 
-document.getElementById("mySet").innerText = mySet
-document.getElementById("opSet").innerText = opSet
-
-if(server === "me"){
-document.getElementById("meServer").innerText = "●"
-document.getElementById("opServer").innerText = ""
-}else{
-document.getElementById("opServer").innerText = "●"
-document.getElementById("meServer").innerText = ""
-}
-
-checkWinner()
+checkGame()
+update()
 
 }
 
-function checkWinner(){
+function checkGame(){
 
-if((me >=21 || opponent >=21) && Math.abs(me-opponent) >=2){
+if(scoreA===11 || scoreB===11){
+speak("Interval")
+startTimer(60)
+}
 
-if(me > opponent){
-mySet++
-}else{
-opSet++
+if(
+(scoreA>=21 || scoreB>=21) &&
+Math.abs(scoreA-scoreB)>=2
+){
+endSet()
+}
+
+if(scoreA===30 || scoreB===30){
+endSet()
 }
 
 }
 
+function endSet(){
+
+let winner
+
+if(scoreA>scoreB){
+setA++
+winner="A"
+document.getElementById("sideA").classList.add("winner")
+}
+else{
+setB++
+winner="B"
+document.getElementById("sideB").classList.add("winner")
 }
 
-document.getElementById("me").onclick = function(){
-me++
-updateDisplay()
+speak("Game won by team "+winner)
+
+startTimer(120)
+
+scoreA=0
+scoreB=0
+
+if(setA===2 || setB===2){
+speak("Match won")
 }
 
-document.getElementById("opponent").onclick = function(){
-opponent++
-updateDisplay()
-}
-
-function changeServer(){
-
-if(server === "me"){
-server = "opponent"
-}else{
-server = "me"
-}
-
-updateDisplay()
-
-}
-
-function nextSet(){
-
-me = 0
-opponent = 0
-
-setNumber++
-
-updateDisplay()
+update()
 
 }
 
-function resetGame(){
+function startTimer(sec){
 
-me = 0
-opponent = 0
+let t=sec
 
-mySet = 0
-opSet = 0
+let timer=setInterval(()=>{
 
-setNumber = 1
+t--
+document.getElementById("timer").innerText=t
 
-updateDisplay()
+if(t<=0){
+clearInterval(timer)
+document.getElementById("timer").innerText=""
+}
+
+},1000)
 
 }
 
-updateDisplay()
+function speak(text){
+
+let msg=new SpeechSynthesisUtterance(text)
+msg.lang="en-US"
+speechSynthesis.speak(msg)
+
+}
+
+function update(){
+
+document.getElementById("scoreA").innerText=scoreA
+document.getElementById("scoreB").innerText=scoreB
+
+document.getElementById("setA").innerText=setA
+document.getElementById("setB").innerText=setB
+
+document.getElementById("teamA").innerText=document.getElementById("teamAname").value
+document.getElementById("teamB").innerText=document.getElementById("teamBname").value
+
+document.getElementById("serveA").innerText= server==="A" ? "●" : ""
+document.getElementById("serveB").innerText= server==="B" ? "●" : ""
+
+}
+
+update()
 
 </script>
 
